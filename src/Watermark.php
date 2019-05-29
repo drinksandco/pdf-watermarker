@@ -2,7 +2,9 @@
 
 namespace Uvinum\PDFWatermark;
 
-class Watermark extends \SplFileObject
+use SplFileObject;
+
+class Watermark extends SplFileObject
 {
 
     private $height;
