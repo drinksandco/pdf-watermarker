@@ -24,6 +24,8 @@
     "require": {
         "php": ">=7.1",
         "ext-fileinfo": "*",
+        "ext-exif": "*",
+        "ext-gd": "*",
         "setasign/fpdi-fpdf": "^2.2"
     },
     "require-dev": {

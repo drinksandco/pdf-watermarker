@@ -1,41 +1,49 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Uvinum\PDFWatermark;
 
+use InvalidArgumentException;
+use RuntimeException;
 use SplFileObject;
+
+use function exif_imagetype;
+use function getimagesize;
+use function imagecreatefromjpeg;
+use function imagecreatefrompng;
+use function imagedestroy;
+use function imageinterlace;
+use function imagejpeg;
+use function imagepng;
+use function imagesavealpha;
+use function sys_get_temp_dir;
+use function uniqid;
 
 class Watermark extends SplFileObject
 {
 
+    private const INVALID_FILE = 'Unsupported image type: %s';
     private $height;
     private $width;
     private $tmpFile;
 
-    public function __construct($file)
+    public function __construct(string $file)
     {
-
         parent::__construct($file);
-
-        $imagetype = exif_imagetype($file);
+        $imageType = exif_imagetype($file);
         $this->tmpFile = sys_get_temp_dir() . '/' . uniqid() . '.png';
 
-        switch ($imagetype) {
+        switch ($imageType) {
             case IMAGETYPE_JPEG:
-                $image = imagecreatefromjpeg($file);
-                imageinterlace($image, false);
-                imagejpeg($image, $this->tmpFile);
-                imagedestroy($image);
+                $this->prepareJpgFile($file);
                 break;
 
             case IMAGETYPE_PNG:
-                $image = imagecreatefrompng($file);
-                imageinterlace($image, false);
-                imagesavealpha($image, true);
-                imagepng($image, $this->tmpFile);
-                imagedestroy($image);
+                $this->preparePngFile($file);
                 break;
             default:
-                throw new \Exception("Unsupported image type: " . $imagetype);
+                throw new InvalidArgumentException(sprintf(self::INVALID_FILE, $imageType));
                 break;
         };
 
@@ -49,7 +57,7 @@ class Watermark extends SplFileObject
      *
      * @return string
      */
-    public function getFilePath()
+    public function getFilePath(): string
     {
         return $this->tmpFile;
     }
@@ -59,7 +67,7 @@ class Watermark extends SplFileObject
      *
      * @return int
      */
-    public function getHeight()
+    public function getHeight(): int
     {
         return $this->height;
     }
@@ -69,8 +77,29 @@ class Watermark extends SplFileObject
      *
      * @return int
      */
-    public function getWidth()
+    public function getWidth(): int
     {
         return $this->width;
+    }
+
+    private function prepareJpgFile(string $file): void
+    {
+        if (false === $image = imagecreatefromjpeg($file)) {
+            throw new RuntimeException('Error occurred creating image from Jpg file.');
+        }
+        imageinterlace($image, 0);
+        imagejpeg($image, $this->tmpFile);
+        imagedestroy($image);
+    }
+
+    private function preparePngFile(string $file): void
+    {
+        if (false === $image = imagecreatefrompng($file)) {
+            throw new RuntimeException('Error occurred creating image from Png file.');
+        }
+        imageinterlace($image, 0);
+        imagesavealpha($image, true);
+        imagepng($image, $this->tmpFile);
+        imagedestroy($image);
     }
 }
