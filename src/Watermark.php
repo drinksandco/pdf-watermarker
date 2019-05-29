@@ -20,7 +20,6 @@ class Watermark extends SplFileObject
         $this->tmpFile = sys_get_temp_dir() . '/' . uniqid() . '.png';
 
         switch ($imagetype) {
-
             case IMAGETYPE_JPEG:
                 $image = imagecreatefromjpeg($file);
                 imageinterlace($image, false);

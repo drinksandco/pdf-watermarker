@@ -61,5 +61,4 @@ class Position
     {
         return new self($name);
     }
-
 }

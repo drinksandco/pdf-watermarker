@@ -2,7 +2,6 @@
 
 namespace Uvinum\PDFWatermark;
 
-
 use setasign\Fpdi\Fpdi;
 
 class FpdiPdfWatermarker implements PdfWatermarker
@@ -96,7 +95,7 @@ class FpdiPdfWatermarker implements PdfWatermarker
             $orientation = "P";
         }
 
-        $this->fpdi->addPage($orientation, array($templateDimension['width'], $templateDimension['height']));
+        $this->fpdi->addPage($orientation, [$templateDimension['width'], $templateDimension['height']]);
     }
 
     /**
@@ -185,7 +184,7 @@ class FpdiPdfWatermarker implements PdfWatermarker
                 break;
         }
 
-        return array($x, $y);
+        return [$x, $y];
     }
 
     /**
