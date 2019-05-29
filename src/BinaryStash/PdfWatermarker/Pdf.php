@@ -1,6 +1,6 @@
 <?php
 
-namespace BinaryStash\PdfWatermarker;
+namespace Uvinum\PDFWatermark;
 
 class Pdf extends \SplFileObject
 {
