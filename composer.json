@@ -23,6 +23,7 @@
     ],
     "require": {
         "php": ">=7.1",
+        "ext-fileinfo": "*",
         "setasign/fpdi-fpdf": "^2.2"
     },
     "require-dev": {
@@ -33,6 +34,11 @@
     "autoload": {
         "psr-4": {
             "Uvinum\\PDFWatermark\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "UvinumTest\\PDFWatermark\\": "src"
         }
     },
     "scripts": {
