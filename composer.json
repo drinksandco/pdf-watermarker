@@ -52,7 +52,7 @@
         "cs-check": "phpcs src --colors",
         "cs-fix": "phpcbf src --colors",
         "inspect": "phpstan analyse src -l7 --ansi",
-        "test": "phpunit --colors=always"
+        "test": "phpunit"
     },
     "config": {
         "sort-packages": true

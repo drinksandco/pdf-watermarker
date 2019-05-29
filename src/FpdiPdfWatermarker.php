@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Uvinum\PDFWatermark;
 
+use RuntimeException;
 use setasign\Fpdi\Fpdi;
 
 class FpdiPdfWatermarker implements PdfWatermarker
@@ -19,7 +20,12 @@ class FpdiPdfWatermarker implements PdfWatermarker
     public function __construct(Pdf $file, Watermark $watermark)
     {
         $this->fpdi = new Fpdi();
-        $this->totalPages = $this->fpdi->setSourceFile($file->getRealPath());
+        $filePath = $file->getRealPath();
+        if (is_bool($filePath)) {
+            throw new RuntimeException('Error occurreg getting file path.');
+        }
+
+        $this->totalPages = $this->fpdi->setSourceFile($filePath);
         $this->watermark = $watermark;
         $this->position = new Position('MiddleCenter');
     }
@@ -70,6 +76,7 @@ class FpdiPdfWatermarker implements PdfWatermarker
      */
     private function process(): void
     {
+        /** @var int $pageNumber */
         foreach (range(1, $this->totalPages) as $pageNumber) {
             $this->importPage($pageNumber);
 
@@ -84,14 +91,14 @@ class FpdiPdfWatermarker implements PdfWatermarker
     /**
      * Import page.
      *
-     * @param $pageNumber
+     * @param int $pageNumber
      * @throws \setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException
      * @throws \setasign\Fpdi\PdfParser\Filter\FilterException
      * @throws \setasign\Fpdi\PdfParser\PdfParserException
      * @throws \setasign\Fpdi\PdfParser\Type\PdfTypeException
      * @throws \setasign\Fpdi\PdfReader\PdfReaderException
      */
-    private function importPage($pageNumber): void
+    private function importPage(int $pageNumber): void
     {
         $templateId = $this->fpdi->importPage($pageNumber);
         $templateDimension = $this->fpdi->getTemplateSize($templateId);

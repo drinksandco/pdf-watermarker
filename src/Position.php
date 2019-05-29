@@ -26,9 +26,9 @@ class Position
     private $name;
 
     /**
-     * @param $name
+     * @param string $name
      *
-     * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function __construct(string $name)
     {
@@ -66,11 +66,11 @@ class Position
     }
 
     /**
-     * @param $name
-     * @param $arguments
+     * @param string $name
+     * @param array $arguments
      * @return Position
      * @throws InvalidArgumentException
-     * @deprecated It will be removed on version(We don't like magic ;-D)
+     * @deprecated It will be removed on version -- We don't like magic ;-D
      */
     public static function __callStatic($name, $arguments): self
     {

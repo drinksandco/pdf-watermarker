@@ -9,8 +9,8 @@ interface PdfWatermarker
     /**
      * Set page range.
      *
-     * @param int $start $end the first page to be watermarked
-     * @param int|null (optional) the last page to be watermarked
+     * @param int $start the first page to be watermarked
+     * @param int|null $end the last page to be watermarked
      * @return void
      */
     public function setPageRange(int $start, ?int $end = null): void;
@@ -40,8 +40,8 @@ interface PdfWatermarker
     /**
      * Save the PDF.
      *
-     * @param $file
+     * @param string $file
      * @return void
      */
-    public function savePdf($file): void;
+    public function savePdf(string $file): void;
 }
