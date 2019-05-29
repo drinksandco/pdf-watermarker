@@ -147,14 +147,14 @@ class FpdiPdfWatermarker implements PdfWatermarker
     /**
      * Calculate the coordinates of the watermark's position.
      *
-     * @param int $wWidth - watermark's width
-     * @param int $wHeight - watermark's height
-     * @param int $tWidth - page width
-     * @param int $tHeight -page height
+     * @param float $wWidth - watermark's width
+     * @param float $wHeight - watermark's height
+     * @param float $tWidth - page width
+     * @param float $tHeight -page height
      *
      * @return array - coordinates of the watermark's position
      */
-    private function calculateWatermarkCoordinates(int $wWidth, int $wHeight, int $tWidth, int $tHeight): array
+    private function calculateWatermarkCoordinates(float $wWidth, float $wHeight, float $tWidth, float $tHeight): array
     {
         switch ($this->position->getName()) {
             case 'TopLeft':

@@ -28,6 +28,14 @@ class FpdiPdfWatermarkerTest extends TestCase
         $this->thenItShouldBeValidWaterMarker();
     }
 
+    public function testItShouldSaveNewWaterMarkedPdf(): void
+    {
+        $this->givenAPdf();
+        $this->givenAWatermark();
+        $this->whenWaterMarkerIsSavedAsPdf();
+        $this->thenWaterMarkedFileShouldExistInFilesystem();
+    }
+
     private function givenAPdf(): void
     {
         $this->pdf = new Pdf('test/test.pdf');
@@ -46,5 +54,17 @@ class FpdiPdfWatermarkerTest extends TestCase
     private function thenItShouldBeValidWaterMarker(): void
     {
         $this->assertInstanceOf(PdfWatermarker::class, $this->waterMarker);
+    }
+
+    private function whenWaterMarkerIsSavedAsPdf(): void
+    {
+        $this->whenWaterMarkerIsCreated();
+        $this->waterMarker->savePdf('test/test-marked.pdf');
+    }
+
+    private function thenWaterMarkedFileShouldExistInFilesystem(): void
+    {
+        $this->assertFileExists('test/test-marked.pdf');
+        unlink('test/test-marked.pdf');
     }
 }
