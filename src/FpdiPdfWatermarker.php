@@ -210,7 +210,7 @@ class FpdiPdfWatermarker implements PdfWatermarker
      * @param string $fileName
      * @return void
      */
-    public function savePdf($fileName = 'doc.pdf'): void
+    public function savePdf(string $fileName = 'doc.pdf'): void
     {
         $this->process();
         $this->fpdi->Output($fileName, 'F');
@@ -220,7 +220,7 @@ class FpdiPdfWatermarker implements PdfWatermarker
      * @param string $fileName
      * @return void
      */
-    public function downloadPdf($fileName = 'doc.pdf'): void
+    public function downloadPdf(string $fileName = 'doc.pdf'): void
     {
         $this->process();
         $this->fpdi->Output($fileName, 'D');
@@ -230,7 +230,7 @@ class FpdiPdfWatermarker implements PdfWatermarker
      * @param string $fileName
      * @return void
      */
-    public function stdOut($fileName = 'doc.pdf'): void
+    public function stdOut(string $fileName = 'doc.pdf'): void
     {
         $this->process();
         $this->fpdi->Output($fileName, 'I');
