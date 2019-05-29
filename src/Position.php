@@ -1,25 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Uvinum\PDFWatermark;
+
+use InvalidArgumentException;
+
+use function array_key_exists;
+use function array_flip;
 
 class Position
 {
-    private $name;
-    private static $options = [
-        'TopLeft', 'TopCenter', 'TopRight',
-        'MiddleLeft', 'MiddleCenter', 'MiddleRight',
-        'BottomLeft', 'BottomCenter', 'BottomRight',
+    private const POSITIONS = [
+        'TopLeft',
+        'TopCenter',
+        'TopRight',
+        'MiddleLeft',
+        'MiddleCenter',
+        'MiddleRight',
+        'BottomLeft',
+        'BottomCenter',
+        'BottomRight',
     ];
+    private const UNSUPPORTED_POSITION = 'Unsupported position: %s';
+    private $name;
 
     /**
      * @param $name
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function __construct($name)
+    public function __construct(string $name)
     {
-        if (!array_key_exists($name, array_flip(self::$options))) {
-            throw new \Exception('Unsupported position:' . $name);
+        if (false === array_key_exists($name, array_flip(self::POSITIONS))) {
+            throw new InvalidArgumentException(sprintf(self::UNSUPPORTED_POSITION, $name));
         }
 
         $this->name = $name;
@@ -28,7 +42,7 @@ class Position
     /**
      * @return string name
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -38,7 +52,7 @@ class Position
      *
      * @return bool
      */
-    public function equals(Position $position)
+    public function equals(Position $position): bool
     {
         return ($this->name === $position->getName());
     }
@@ -46,7 +60,7 @@ class Position
     /**
      * @return string name
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->name;
     }
@@ -54,10 +68,11 @@ class Position
     /**
      * @param $name
      * @param $arguments
-     *
      * @return Position
+     * @throws InvalidArgumentException
+     * @deprecated It will be removed on version(We don't like magic ;-D)
      */
-    public static function __callStatic($name, $arguments)
+    public static function __callStatic($name, $arguments): self
     {
         return new self($name);
     }

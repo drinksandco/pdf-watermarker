@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Uvinum\PDFWatermark;
 
 interface PdfWatermarker
@@ -7,10 +9,11 @@ interface PdfWatermarker
     /**
      * Set page range.
      *
-     * @param int $startPage - the first page to be watermarked
-     * @param int|null $endPage - (optional) the last page to be watermarked
+     * @param int $start $end the first page to be watermarked
+     * @param int|null (optional) the last page to be watermarked
+     * @return void
      */
-    public function setPageRange($start, $end = null);
+    public function setPageRange(int $start, ?int $end = null): void;
 
     /**
      * Set the Position of the Watermark
@@ -18,21 +21,21 @@ interface PdfWatermarker
      * @param Position $position
      * @return void
      */
-    public function setPosition(Position $position);
+    public function setPosition(Position $position): void;
 
     /**
      * Set the watermark as background.
      *
      * @return void
      */
-    public function setAsBackground();
+    public function setAsBackground(): void;
 
     /**
      * Set the watermark as overlay.
      *
      * @return void
      */
-    public function setAsOverlay();
+    public function setAsOverlay(): void;
 
     /**
      * Save the PDF.
@@ -40,5 +43,5 @@ interface PdfWatermarker
      * @param $file
      * @return void
      */
-    public function savePdf($file);
+    public function savePdf($file): void;
 }

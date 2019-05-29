@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Uvinum\PDFWatermark;
 
 use setasign\Fpdi\Fpdi;
@@ -16,7 +18,7 @@ class FpdiPdfWatermarker implements PdfWatermarker
 
     public function __construct(Pdf $file, Watermark $watermark)
     {
-        $this->fpdi = new FPDI();
+        $this->fpdi = new Fpdi();
         $this->totalPages = $this->fpdi->setSourceFile($file->getRealPath());
         $this->watermark = $watermark;
         $this->position = new Position('MiddleCenter');
@@ -28,9 +30,9 @@ class FpdiPdfWatermarker implements PdfWatermarker
      * @param int $startPage - the first page to be watermarked
      * @param int $endPage - (optional) the last page to be watermarked
      */
-    public function setPageRange($startPage = 1, $endPage = null)
+    public function setPageRange(int $startPage = 1, ?int $endPage = null): void
     {
-        $endPage = is_null($endPage) ? $this->totalPages : $endPage;
+        $endPage = $endPage ?? $this->totalPages;
 
         foreach (range($startPage, $endPage) as $pageNumber) {
             $this->specificPages[] = $pageNumber;
@@ -40,7 +42,7 @@ class FpdiPdfWatermarker implements PdfWatermarker
     /**
      * Apply the watermark below the PDF's content.
      */
-    public function setAsBackground()
+    public function setAsBackground(): void
     {
         $this->asBackground = true;
     }
@@ -48,7 +50,7 @@ class FpdiPdfWatermarker implements PdfWatermarker
     /**
      * Apply the watermark over the PDF's content.
      */
-    public function setAsOverlay()
+    public function setAsOverlay(): void
     {
         $this->asBackground = false;
     }
@@ -58,7 +60,7 @@ class FpdiPdfWatermarker implements PdfWatermarker
      *
      * @param Position $position
      */
-    public function setPosition(Position $position)
+    public function setPosition(Position $position): void
     {
         $this->position = $position;
     }
@@ -66,12 +68,12 @@ class FpdiPdfWatermarker implements PdfWatermarker
     /**
      * Loop through the pages while applying the watermark.
      */
-    private function process()
+    private function process(): void
     {
         foreach (range(1, $this->totalPages) as $pageNumber) {
             $this->importPage($pageNumber);
 
-            if (in_array($pageNumber, $this->specificPages) || empty($this->specificPages)) {
+            if (empty($this->specificPages) || in_array($pageNumber, $this->specificPages, true)) {
                 $this->watermarkPage($pageNumber);
             } else {
                 $this->watermarkPage($pageNumber, false);
@@ -82,9 +84,14 @@ class FpdiPdfWatermarker implements PdfWatermarker
     /**
      * Import page.
      *
-     * @param int $pageNumber - page number
+     * @param $pageNumber
+     * @throws \setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException
+     * @throws \setasign\Fpdi\PdfParser\Filter\FilterException
+     * @throws \setasign\Fpdi\PdfParser\PdfParserException
+     * @throws \setasign\Fpdi\PdfParser\Type\PdfTypeException
+     * @throws \setasign\Fpdi\PdfReader\PdfReaderException
      */
-    private function importPage($pageNumber)
+    private function importPage($pageNumber): void
     {
         $templateId = $this->fpdi->importPage($pageNumber);
         $templateDimension = $this->fpdi->getTemplateSize($templateId);
@@ -101,10 +108,15 @@ class FpdiPdfWatermarker implements PdfWatermarker
     /**
      * Apply the watermark to a specific page.
      *
-     * @param int $pageNumber - page number
-     * @param bool $watermark_visible - (optional) Make the watermark visible. True by default.
+     * @param int $pageNumber
+     * @param bool $watermark_visible (optional) Make the watermark visible. True by default.
+     * @throws \setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException
+     * @throws \setasign\Fpdi\PdfParser\Filter\FilterException
+     * @throws \setasign\Fpdi\PdfParser\PdfParserException
+     * @throws \setasign\Fpdi\PdfParser\Type\PdfTypeException
+     * @throws \setasign\Fpdi\PdfReader\PdfReaderException
      */
-    private function watermarkPage($pageNumber, $watermark_visible = true)
+    private function watermarkPage(int $pageNumber, bool $watermark_visible = true): void
     {
         $templateId = $this->fpdi->importPage($pageNumber);
         $templateDimension = $this->fpdi->getTemplateSize($templateId);
@@ -138,11 +150,11 @@ class FpdiPdfWatermarker implements PdfWatermarker
      * @param int $wWidth - watermark's width
      * @param int $wHeight - watermark's height
      * @param int $tWidth - page width
-     * @param int $Height -page height
+     * @param int $tHeight -page height
      *
      * @return array - coordinates of the watermark's position
      */
-    private function calculateWatermarkCoordinates($wWidth, $wHeight, $tWidth, $tHeight)
+    private function calculateWatermarkCoordinates(int $wWidth, int $wHeight, int $tWidth, int $tHeight): array
     {
         switch ($this->position->getName()) {
             case 'TopLeft':
@@ -191,7 +203,7 @@ class FpdiPdfWatermarker implements PdfWatermarker
      * @param string $fileName
      * @return void
      */
-    public function savePdf($fileName = 'doc.pdf')
+    public function savePdf($fileName = 'doc.pdf'): void
     {
         $this->process();
         $this->fpdi->Output($fileName, 'F');
@@ -201,7 +213,7 @@ class FpdiPdfWatermarker implements PdfWatermarker
      * @param string $fileName
      * @return void
      */
-    public function downloadPdf($fileName = 'doc.pdf')
+    public function downloadPdf($fileName = 'doc.pdf'): void
     {
         $this->process();
         $this->fpdi->Output($fileName, 'D');
@@ -211,7 +223,7 @@ class FpdiPdfWatermarker implements PdfWatermarker
      * @param string $fileName
      * @return void
      */
-    public function stdOut($fileName = 'doc.pdf')
+    public function stdOut($fileName = 'doc.pdf'): void
     {
         $this->process();
         $this->fpdi->Output($fileName, 'I');
