@@ -7,6 +7,10 @@ namespace Uvinum\PDFWatermark;
 use RuntimeException;
 use setasign\Fpdi\Fpdi;
 
+use function in_array;
+use function is_bool;
+use function range;
+
 class FpdiPdfWatermarker implements PdfWatermarker
 {
     private $watermark;
