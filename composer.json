@@ -19,12 +19,12 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "itbz/fpdf": "^1.7",
-        "itbz/fpdi": "^1.5"
+        "setasign/fpdi/fpdf": "^1.7",
+        "setasign/fpdi": "^1.5"
     },
     "autoload": {
         "psr-4": {
-            "": "src"
+            "Uvinum\\PDFWatermark\\": "src"
         }
     }
 }

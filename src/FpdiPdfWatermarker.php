@@ -1,8 +1,9 @@
 <?php
 
-namespace BinaryStash\PdfWatermarker;
+namespace Uvinum\PDFWatermark;
 
-use fpdi\FPDI;
+
+use setasign\Fpdi\Fpdi;
 
 class FpdiPdfWatermarker implements PdfWatermarker
 {
@@ -11,11 +12,13 @@ class FpdiPdfWatermarker implements PdfWatermarker
     private $specificPages = [];
     private $position;
     private $asBackground = false;
+    /** @var Fpdi */
+    private $fpdi;
 
     public function __construct(Pdf $file, Watermark $watermark)
     {
-        $this->fpfi = new FPDI();
-        $this->totalPages = $this->fpfi->setSourceFile($file->getRealPath());
+        $this->fpdi = new FPDI();
+        $this->totalPages = $this->fpdi->setSourceFile($file->getRealPath());
         $this->watermark = $watermark;
         $this->position = new Position('MiddleCenter');
     }
@@ -84,18 +87,16 @@ class FpdiPdfWatermarker implements PdfWatermarker
      */
     private function importPage($pageNumber)
     {
-        $templateId = $this->fpfi->importPage($pageNumber);
-        $templateDimension = $this->fpfi->getTemplateSize($templateId);
+        $templateId = $this->fpdi->importPage($pageNumber);
+        $templateDimension = $this->fpdi->getTemplateSize($templateId);
 
-        if ($templateDimension['w'] > $templateDimension['h']) {
+        if ($templateDimension['width'] > $templateDimension['height']) {
             $orientation = "L";
         } else {
             $orientation = "P";
         }
 
-        $this->fpfi->DefOrientation = $orientation;
-
-        $this->fpfi->addPage($orientation, array($templateDimension['w'], $templateDimension['h']));
+        $this->fpdi->addPage($orientation, array($templateDimension['width'], $templateDimension['height']));
     }
 
     /**
@@ -106,8 +107,8 @@ class FpdiPdfWatermarker implements PdfWatermarker
      */
     private function watermarkPage($pageNumber, $watermark_visible = true)
     {
-        $templateId = $this->fpfi->importPage($pageNumber);
-        $templateDimension = $this->fpfi->getTemplateSize($templateId);
+        $templateId = $this->fpdi->importPage($pageNumber);
+        $templateDimension = $this->fpdi->getTemplateSize($templateId);
 
         $wWidth = ($this->watermark->getWidth() / 96) * 25.4; //in mm
         $wHeight = ($this->watermark->getHeight() / 96) * 25.4; //in mm
@@ -115,20 +116,20 @@ class FpdiPdfWatermarker implements PdfWatermarker
         $watermarkCoords = $this->calculateWatermarkCoordinates(
             $wWidth,
             $wHeight,
-            $templateDimension['w'],
-            $templateDimension['h']
+            $templateDimension['width'],
+            $templateDimension['height']
         );
 
         if ($watermark_visible) {
             if ($this->asBackground) {
-                $this->fpfi->Image($this->watermark->getFilePath(), $watermarkCoords[0], $watermarkCoords[1], -96);
-                $this->fpfi->useTemplate($templateId);
+                $this->fpdi->Image($this->watermark->getFilePath(), $watermarkCoords[0], $watermarkCoords[1], -96);
+                $this->fpdi->useTemplate($templateId);
             } else {
-                $this->fpfi->useTemplate($templateId);
-                $this->fpfi->Image($this->watermark->getFilePath(), $watermarkCoords[0], $watermarkCoords[1], -96);
+                $this->fpdi->useTemplate($templateId);
+                $this->fpdi->Image($this->watermark->getFilePath(), $watermarkCoords[0], $watermarkCoords[1], -96);
             }
         } else {
-            $this->fpfi->useTemplate($templateId);
+            $this->fpdi->useTemplate($templateId);
         }
     }
 
@@ -194,7 +195,7 @@ class FpdiPdfWatermarker implements PdfWatermarker
     public function savePdf($fileName = 'doc.pdf')
     {
         $this->process();
-        $this->fpfi->Output($fileName, 'F');
+        $this->fpdi->Output($fileName, 'F');
     }
 
     /**
@@ -204,7 +205,7 @@ class FpdiPdfWatermarker implements PdfWatermarker
     public function downloadPdf($fileName = 'doc.pdf')
     {
         $this->process();
-        $this->fpfi->Output($fileName, 'D');
+        $this->fpdi->Output($fileName, 'D');
     }
 
     /**
@@ -214,6 +215,6 @@ class FpdiPdfWatermarker implements PdfWatermarker
     public function stdOut($fileName = 'doc.pdf')
     {
         $this->process();
-        $this->fpfi->Output($fileName, 'I');
+        $this->fpdi->Output($fileName, 'I');
     }
 }

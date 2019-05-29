@@ -1,6 +1,6 @@
 <?php
 
-namespace BinaryStash\PdfWatermarker;
+namespace Uvinum\PDFWatermark;
 
 class Pdf extends \SplFileObject
 {
@@ -13,7 +13,7 @@ class Pdf extends \SplFileObject
         $fileInfo = new \finfo();
         $mimeType = $fileInfo->file($file, FILEINFO_MIME_TYPE);
 
-        if ($mimeType !== 'application/pdf') {
+        if ($mimeType !== 'application/pdf' && $mimeType !== 'application/octet-stream') {
             throw new \InvalidArgumentException('File does not seem to be a PDF: ' . $mimeType);
         }
 
